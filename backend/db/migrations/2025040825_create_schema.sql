@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS blogs (
   link TEXT NOT NULL,
   description TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-)
+
+  CONSTRAINT blogs_pkey PRIMARY KEY (id)
+);
 -- +goose StatementEnd
 --
 -- +goose down
