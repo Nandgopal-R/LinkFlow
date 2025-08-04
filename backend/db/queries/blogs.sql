@@ -1,0 +1,10 @@
+-- name: ListBlogs :many
+SELECT * FROM blogs;
+
+-- name: InsertBlogQuery :exec
+INSERT INTO blogs (title, link_url, description) 
+VALUES($1,$2,$3);
+
+--name: DeleteBlogQuery :exec
+DELETE FROM blogs 
+where link_url=$1;
