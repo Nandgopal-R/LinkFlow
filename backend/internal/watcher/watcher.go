@@ -30,8 +30,6 @@ func DiffFinder(oldContent string, newContent string) string {
 func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 	q := db.New(conn)
 
-	deletedLines := make([]string, 0)
-	addedLines := make([]string, 0)
 	initialSnapshot, err := os.ReadFile(file_addr)
 	if err != nil {
 		log.Fatal(err)
@@ -48,7 +46,7 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 				fmt.Println("File modified:", event.Name)
 				newSnapshot, err := os.ReadFile(file_addr)
 				if err != nil {
-					log.Println("Error reading file:", err) // Log error if reading fails
+					log.Println("Error reading file:", err)
 					continue
 				}
 
@@ -58,7 +56,6 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 					title, blog_url, desc := util.SplitString(line[1:])
 					if len(line) > 0 && line[0] == '-' && line[1] != '-' {
 						q.DeleteBlogQuery(context.Background(), blog_url)
-						// deletedLines = append(deletedLines, line[1:]) // Collect deleted lines
 					}
 					if len(line) > 0 && line[0] == '+' && line[1] != '+' {
 						blog := db.InsertBlogQueryParams{
@@ -67,16 +64,9 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 							Description: desc,
 						}
 						q.InsertBlogQuery(context.Background(), blog)
-						addedLines = append(addedLines, line[1:]) // Collect added lines
 					}
 				}
-
-				fmt.Println("Diff:\n", diff)                // Print the diff
-				fmt.Println("Deleted Lines:", deletedLines) // Print deleted lines
-				fmt.Println("Added Lines:", addedLines)     // Print added lines
-				initialSnapshot = newSnapshot               // Update the initial snapshot to the new content
-				deletedLines = make([]string, 0)            // Reset deleted lines
-				addedLines = make([]string, 0)              // Reset added lines
+				initialSnapshot = newSnapshot // Update the initial snapshot to the new content
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
