@@ -5,7 +5,7 @@
 package db
 
 import (
-	"time"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Blog struct {
@@ -13,5 +13,5 @@ type Blog struct {
 	Title       string
 	BlogUrl     string
 	Description string
-	CreatedAt   time.Time
+	CreatedAt   pgtype.Timestamp
 }

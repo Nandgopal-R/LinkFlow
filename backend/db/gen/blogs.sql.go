@@ -15,7 +15,7 @@ where blog_url=$1
 `
 
 func (q *Queries) DeleteBlogQuery(ctx context.Context, blogUrl string) error {
-	_, err := q.db.ExecContext(ctx, deleteBlogQuery, blogUrl)
+	_, err := q.db.Exec(ctx, deleteBlogQuery, blogUrl)
 	return err
 }
 
@@ -31,7 +31,7 @@ type InsertBlogQueryParams struct {
 }
 
 func (q *Queries) InsertBlogQuery(ctx context.Context, arg InsertBlogQueryParams) error {
-	_, err := q.db.ExecContext(ctx, insertBlogQuery, arg.Title, arg.BlogUrl, arg.Description)
+	_, err := q.db.Exec(ctx, insertBlogQuery, arg.Title, arg.BlogUrl, arg.Description)
 	return err
 }
 
@@ -40,7 +40,7 @@ SELECT id, title, blog_url, description, created_at FROM blogs
 `
 
 func (q *Queries) ListBlogs(ctx context.Context) ([]Blog, error) {
-	rows, err := q.db.QueryContext(ctx, listBlogs)
+	rows, err := q.db.Query(ctx, listBlogs)
 	if err != nil {
 		return nil, err
 	}
@@ -58,9 +58,6 @@ func (q *Queries) ListBlogs(ctx context.Context) ([]Blog, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
