@@ -44,6 +44,8 @@ func main() {
 
 	go watcher.FileWatcher(NewWatcher, filepath, conn)
 
+	<-make(chan bool)
+
 	// Wait indefinitely
-	select {}
+	// select {}
 }

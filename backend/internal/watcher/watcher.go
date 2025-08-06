@@ -10,6 +10,7 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 	"log"
 	"os"
+	"time"
 )
 
 func DiffFinder(oldContent string, newContent string) string {
@@ -42,22 +43,33 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 				return
 			}
 			fmt.Println("Event:", event)
-			if event.Op&fsnotify.Write == fsnotify.Write {
+			if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Rename == fsnotify.Rename {
 				fmt.Println("File modified:", event.Name)
 				newSnapshot, err := os.ReadFile(file_addr)
 				if err != nil {
-					log.Println("Error reading file:", err)
-					continue
-				}
+					// If the file doesn't exist, it's likely our race condition.
+					if os.IsNotExist(err) {
+						// Wait 100 milliseconds for the editor to finish the rename.
+						time.Sleep(100 * time.Millisecond)
+						// Try reading the file again.
+						newSnapshot, err = os.ReadFile(file_addr)
+					}
 
+					// If there's still an error after the retry, then skip this event.
+					if err != nil {
+						log.Printf("Error reading file after retry: %v", err)
+						continue
+					}
+				}
 				diff := DiffFinder(string(initialSnapshot), string(newSnapshot))
 				diffSlices := difflib.SplitLines(diff)
 				for _, line := range diffSlices {
-					title, blog_url, desc := util.SplitString(line[1:])
 					if len(line) > 0 && line[0] == '-' && line[1] != '-' {
+						_, blog_url, _ := util.SplitString(line[1:])
 						q.DeleteBlogQuery(context.Background(), blog_url)
 					}
 					if len(line) > 0 && line[0] == '+' && line[1] != '+' {
+						title, blog_url, desc := util.SplitString(line[1:])
 						blog := db.InsertBlogQueryParams{
 							Title:       title,
 							BlogUrl:     blog_url,
@@ -67,6 +79,10 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 					}
 				}
 				initialSnapshot = newSnapshot // Update the initial snapshot to the new content
+				err = watcher.Add(file_addr)  // Re-add the file to the watcher
+				if err != nil {
+					log.Printf("Error re-adding file to watcher: %v", err)
+				}
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
