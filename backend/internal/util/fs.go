@@ -35,5 +35,7 @@ func EnsureBlogFileExists() (string, error) {
 		file.Close()
 	}
 
+	fmt.Println("File exists at:", filePath)
+
 	return filePath, nil
 }

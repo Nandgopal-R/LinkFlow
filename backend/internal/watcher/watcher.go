@@ -70,7 +70,7 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
-				log.Println("Error reading from watcher errors channel")
+				log.Println("Watcher errors channel closed.")
 				return
 			}
 			log.Println("Error:", err)
