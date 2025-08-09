@@ -5,7 +5,7 @@ import (
 )
 
 func SplitString(str string) (string, string, string) {
-	parts := strings.Split(str, ",")
+	parts := strings.Split(str, "_")
 	if len(parts) == 2 {
 		parts = append(parts, "")
 	}
