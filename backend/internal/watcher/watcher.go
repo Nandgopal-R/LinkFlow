@@ -64,10 +64,14 @@ func FileWatcher(watcher *fsnotify.Watcher, file_addr string, conn *pgx.Conn) {
 				diff := DiffFinder(string(initialSnapshot), string(newSnapshot))
 				diffSlices := difflib.SplitLines(diff)
 				for _, line := range diffSlices {
+
+					// Delete blog if line starts with '-'
 					if len(line) > 0 && line[0] == '-' && line[1] != '-' {
 						_, blog_url, _ := util.SplitString(line[1:])
 						q.DeleteBlogQuery(context.Background(), blog_url)
 					}
+
+					// Insert blog if line starts with '+'
 					if len(line) > 0 && line[0] == '+' && line[1] != '+' {
 						title, blog_url, desc := util.SplitString(line[1:])
 						blog := db.InsertBlogQueryParams{
