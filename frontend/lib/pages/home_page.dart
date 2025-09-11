@@ -52,11 +52,9 @@ class _HomePageState extends State<HomePage> {
         fontSize: 40,
       ),
       ),
-      // backgroundColor: const Color.fromARGB(206, 22, 22, 22),
       ),
       drawer: Drawer(
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DrawerHeader(child: Text("LinkFLow",style: TextStyle(fontSize: 30),)),
            ListTile(
