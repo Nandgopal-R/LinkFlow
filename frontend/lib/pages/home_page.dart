@@ -13,6 +13,7 @@ class _HomePageState extends State<HomePage> {
 
 // Dialog box for adding new blog
   void createNote(){
+
     showDialog(
       context: context, 
       builder: (context) => AlertDialog(
@@ -43,20 +44,18 @@ class _HomePageState extends State<HomePage> {
       ));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(centerTitle: true,title: Text("LinkFlow", style:GoogleFonts.dmSerifText(
-        fontSize: 40,
-      ),
-      ),
-      ),
+      appBar: AppBar(centerTitle: true,title: Text("LinkFlow", 
+      style:GoogleFonts.dmSerifText(fontSize: 40,),
+      ),),
+
       drawer: Drawer(
         child: Column(
           children: [
-            DrawerHeader(child: Text("LinkFLow",style: TextStyle(fontSize: 30),)),
+            DrawerHeader(child: Text("LinkFLow",style: GoogleFonts.dmSerifText(fontSize: 30),)),
            ListTile(
             leading: Icon(Icons.home),
             title: Text("Home"),
@@ -76,6 +75,8 @@ class _HomePageState extends State<HomePage> {
         CardComponent(),
         CardComponent()
       ],),
+
+      
       floatingActionButton: FloatingActionButton(onPressed: createNote,
       child: Icon(Icons.add, color: Colors.black, size: 30,),
       backgroundColor: Colors.white,

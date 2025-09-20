@@ -20,10 +20,6 @@ class MyApp extends StatelessWidget {
           secondary: Colors.grey.shade700,
           inversePrimary: Colors.grey.shade300,
         ),
-        // focusColor: Colors.transparent,
-        // highlightColor: Colors.transparent,
-        // hoverColor: Colors.transparent,
-        // splashColor: Colors.transparent,
       ),
       home:HomePage(),
     );
