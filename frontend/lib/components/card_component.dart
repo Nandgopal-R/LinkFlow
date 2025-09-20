@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 
-class CardComponent extends StatelessWidget {
+class CardComponent extends StatefulWidget {
   const CardComponent({super.key});
 
   @override
+  State<CardComponent> createState() => _CardComponentState();
+}
+
+class _CardComponentState extends State<CardComponent> {
+  @override
+
+  bool is_favorite = false;
+
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -31,20 +39,32 @@ class CardComponent extends StatelessWidget {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     // Add logic here
-                    if (value == 'favorite') {
-                      print("Favorited!");
+                    if (value == 'favorite_toggle') {
+                      setState(() {
+                        is_favorite = !is_favorite;
+                        print(is_favorite);
+                      });
                     } else if (value == 'delete') {
                       print("Deleted!");
                     }
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'favorite',
-                      child: ListTile(
-                        leading: Icon(Icons.favorite_border),
-                        title: Text('Favorite'),
-                      ),
-                    ),
+                    if (is_favorite)
+                        const PopupMenuItem<String>(
+                          value: 'favorite_toggle',
+                          child: ListTile(
+                            leading: Icon(Icons.favorite, color: Colors.red),
+                            title: Text('Unfavorite'),
+                          ),
+                        )
+                      else
+                        const PopupMenuItem<String>(
+                          value: 'favorite_toggle',
+                          child: ListTile(
+                            leading: Icon(Icons.favorite_border),
+                            title: Text('Favorite'),
+                          ),
+                        ),
                     const PopupMenuItem<String>(
                       value: 'delete',
                       child: ListTile(
