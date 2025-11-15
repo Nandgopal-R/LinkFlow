@@ -1,51 +1,75 @@
 package main
 
-import (
-	"context"
-	"fmt"
-	"log"
-	"os"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"log"
+// 	"os"
+//
+// 	"github.com/Nandgopal-R/LinkFLow/internal/util"
+// 	"github.com/Nandgopal-R/LinkFLow/internal/watcher"
+// 	"github.com/fsnotify/fsnotify"
+// 	"github.com/jackc/pgx/v5"
+// 	"github.com/joho/godotenv"
+// )
 
-	"github.com/Nandgopal-R/LinkFLow/internal/util"
-	"github.com/Nandgopal-R/LinkFLow/internal/watcher"
-	"github.com/fsnotify/fsnotify"
-	"github.com/jackc/pgx/v5"
-	"github.com/joho/godotenv"
+// func main() {
+// 	err := godotenv.Load()
+// 	if err != nil {
+// 		log.Fatal("Error loading .env file")
+// 	}
+// 	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+// 	if err != nil {
+// 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+// 		os.Exit(1)
+// 	}
+// 	defer conn.Close(context.Background())
+//
+// 	filepath, err := util.EnsureBlogFileExists()
+// 	if err != nil {
+// 		fmt.Fprintf(os.Stderr, "Error ensuring blog file exists: %v\n", err)
+// 		os.Exit(1)
+// 	}
+//
+// 	NewWatcher, err := fsnotify.NewWatcher() // Create a new file watcher
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer NewWatcher.Close()
+//
+// 	err = NewWatcher.Add(filepath)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+//
+// 	go watcher.FileWatcher(NewWatcher, filepath, conn)
+//
+// 	<-make(chan bool)
+//
+// 	// Wait indefinitely
+// 	// select {}
+// }
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer conn.Close(context.Background())
 
-	filepath, err := util.EnsureBlogFileExists()
+	r := gin.Default()
+
+	r.GET("/test", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Server is running",
+		})
+	})
+
+	err := r.Run()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error ensuring blog file exists: %v\n", err)
-		os.Exit(1)
+		log.Fatal("Failed to start server")
 	}
 
-	NewWatcher, err := fsnotify.NewWatcher() // Create a new file watcher
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer NewWatcher.Close()
-
-	err = NewWatcher.Add(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	go watcher.FileWatcher(NewWatcher, filepath, conn)
-
-	<-make(chan bool)
-
-	// Wait indefinitely
-	// select {}
 }

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "linkflow_bruno",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
