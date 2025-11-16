@@ -1,0 +1,24 @@
+meta {
+  name: addBlog
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/linkflow/blog
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "My First Blog Post",
+    "blogUrl": "https://myblog.com/first-post",
+    "description": "This is a post about learning Go and Gin."
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
