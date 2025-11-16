@@ -1,4 +1,4 @@
--- name: ListBlogs :many
+-- name: ListBlogsQuery :many
 SELECT * FROM blogs;
 
 -- name: InsertBlogQuery :exec

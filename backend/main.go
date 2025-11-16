@@ -51,13 +51,31 @@ package main
 // }
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+
+	blogsApi "github.com/Nandgopal-R/LinkFLow/api/blogs"
+	"github.com/Nandgopal-R/LinkFLow/cmd"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 )
 
-func main() {
+func SetupRouter() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	cmd.DBPool, err = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal("Unable to connect to Database")
+	}
+	defer cmd.DBPool.Close()
 
 	r := gin.Default()
 
@@ -67,9 +85,17 @@ func main() {
 		})
 	})
 
-	err := r.Run()
+	lfrouter := r.Group("/linkflow")
+
+	blogsApi.BlogsRoutes(lfrouter)
+
+	err = r.Run()
 	if err != nil {
 		log.Fatal("Failed to start server")
 	}
 
+}
+
+func main() {
+	SetupRouter()
 }

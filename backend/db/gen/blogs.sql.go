@@ -35,12 +35,12 @@ func (q *Queries) InsertBlogQuery(ctx context.Context, arg InsertBlogQueryParams
 	return err
 }
 
-const listBlogs = `-- name: ListBlogs :many
+const listBlogsQuery = `-- name: ListBlogsQuery :many
 SELECT id, title, blog_url, description, created_at FROM blogs
 `
 
-func (q *Queries) ListBlogs(ctx context.Context) ([]Blog, error) {
-	rows, err := q.db.Query(ctx, listBlogs)
+func (q *Queries) ListBlogsQuery(ctx context.Context) ([]Blog, error) {
+	rows, err := q.db.Query(ctx, listBlogsQuery)
 	if err != nil {
 		return nil, err
 	}
