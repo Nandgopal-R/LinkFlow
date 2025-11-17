@@ -5,6 +5,6 @@ SELECT * FROM blogs;
 INSERT INTO blogs (title, blog_url, description) 
 VALUES($1,$2,$3);
 
--- name: DeleteBlogQuery :exec
+-- name: DeleteBlogQuery :execrows
 DELETE FROM blogs 
-where blog_url=$1;
+where id=$1;

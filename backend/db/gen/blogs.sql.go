@@ -9,14 +9,17 @@ import (
 	"context"
 )
 
-const deleteBlogQuery = `-- name: DeleteBlogQuery :exec
+const deleteBlogQuery = `-- name: DeleteBlogQuery :execrows
 DELETE FROM blogs 
-where blog_url=$1
+where id=$1
 `
 
-func (q *Queries) DeleteBlogQuery(ctx context.Context, blogUrl string) error {
-	_, err := q.db.Exec(ctx, deleteBlogQuery, blogUrl)
-	return err
+func (q *Queries) DeleteBlogQuery(ctx context.Context, id int32) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteBlogQuery, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const insertBlogQuery = `-- name: InsertBlogQuery :exec
